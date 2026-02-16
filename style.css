@@ -1,0 +1,1137 @@
+:root {
+    --wa-header-bg: #005c97;
+    --wa-accent-blue: #34B7F1;
+    --wa-message-out-bg: #e1f6fb;
+    --wa-message-in-bg: #ffffff;
+    --wa-app-bg: #f0f2f5;
+    --wa-chat-bg: #e5ddd5;
+    --wa-icon-color: #f0f2f5;
+    --wa-text-primary: #111b21;
+    --wa-text-secondary: #667781;
+    --wa-border-color: #e9edef;
+    --wa-active-tab-indicator: var(--wa-accent-blue);
+    --wa-button-color: #008069;
+    --wa-link-color: #00a8e8;
+    --wa-shadow: rgba(17, 27, 33, 0.15);
+    --danger-color: #e91e63;
+    --success-color: #4CAF50;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Roboto', sans-serif;
+    background-color: #d1d7db;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+/* App Container */
+#app-container {
+    width: 100%;
+    max-width: 450px;
+    height: 100%;
+    max-height: 950px;
+    background-color: white;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 480px) {
+    #app-container {
+        height: 90vh;
+        border-radius: 12px;
+    }
+}
+
+/* Views */
+.view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    transition: transform 0.3s ease-in-out;
+    z-index: 10;
+}
+
+.view.hidden {
+    transform: translateX(100%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Show auth view properly when active */
+#auth-view:not(.hidden) {
+    z-index: 20;
+    transform: translateX(0);
+}
+
+/* General UI Components */
+.hidden {
+    display: none !important;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--wa-icon-color);
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.primary-btn {
+    background-color: var(--wa-button-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.secondary-btn {
+    background-color: transparent;
+    color: var(--wa-button-color);
+    border: 1px solid var(--wa-button-color);
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.danger-btn {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--wa-border-color);
+    border-radius: 4px;
+    outline: none;
+    font-size: 1rem;
+}
+
+input:focus {
+    border-color: var(--wa-accent-blue);
+}
+
+.error-msg {
+    color: var(--danger-color);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.success-msg {
+    color: var(--success-color);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Auth View */
+#auth-view {
+    justify-content: center;
+    align-items: center;
+    background-color: var(--wa-app-bg);
+}
+
+.auth-box {
+    width: 80%;
+    max-width: 350px;
+    text-align: center;
+}
+
+.auth-box h1 {
+    color: var(--wa-header-bg);
+    margin-bottom: 10px;
+}
+
+.tagline {
+    color: var(--wa-text-secondary);
+    margin-bottom: 30px;
+}
+
+.switch-auth {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: var(--wa-text-secondary);
+}
+
+.switch-auth a {
+    color: var(--wa-link-color);
+    text-decoration: none;
+}
+
+/* Main View */
+.main-header {
+    background-color: var(--wa-header-bg);
+    color: white;
+    padding-top: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 15;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+.app-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.header-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.header-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.nav-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    position: relative;
+}
+
+.nav-tab.active {
+    color: white;
+    border-bottom-color: white;
+}
+
+.badge {
+    background-color: var(--wa-active-tab-indicator);
+    /* White text on blue badge? prompt says accent blue */
+    /* To make it readable, lets change text color or bg */
+    background-color: white;
+    color: var(--wa-header-bg);
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+#main-content {
+    flex: 1;
+    overflow-y: auto;
+    background-color: white;
+    position: relative;
+}
+
+.content-panel {
+    height: 100%;
+    width: 100%;
+}
+
+.content-panel.hidden {
+    display: none;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--wa-text-secondary);
+}
+
+.section-title {
+    padding: 15px;
+    font-weight: bold;
+    color: var(--wa-text-secondary);
+    background-color: var(--wa-app-bg);
+}
+
+/* List Items (Chats, Users) */
+.list-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--wa-border-color);
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.list-item:hover {
+    background-color: #f5f5f5;
+}
+
+/* Specific to chat items */
+.contact-avatar {
+    width: 45px;
+    height: 45px;
+    background-color: #ddd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.item-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.item-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--wa-text-primary);
+    margin-bottom: 4px;
+}
+
+.item-subtitle {
+    font-size: 0.9rem;
+    color: var(--wa-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-meta {
+    font-size: 0.75rem;
+    color: var(--wa-text-secondary);
+    margin-left: 10px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.unread-badge {
+    background-color: var(--success-color);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    margin-top: 5px;
+}
+
+/* Chat View */
+#chat-view[class="view"] {
+    /* override hidden transform logic to allow sliding in properly */
+    transform: translateX(100%);
+}
+
+#chat-view[class="view"]:not(.hidden) {
+    transform: translateX(0);
+}
+
+.chat-header {
+    background-color: var(--wa-header-bg);
+    color: white;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    z-index: 15;
+}
+
+.chat-contact-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.contact-name {
+    font-weight: 500;
+    display: block;
+}
+
+.contact-status {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+#chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    background-color: var(--wa-chat-bg);
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23bdbdbd' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.message-bubble {
+    max-width: 75%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    position: relative;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.message-received {
+    align-self: flex-start;
+    background-color: var(--wa-message-in-bg);
+    border-top-left-radius: 0;
+}
+
+.message-sent {
+    align-self: flex-end;
+    background-color: var(--wa-message-out-bg);
+    border-top-right-radius: 0;
+}
+
+.message-time {
+    font-size: 0.7rem;
+    color: rgba(0, 0, 0, 0.45);
+    display: block;
+    text-align: right;
+    margin-top: 4px;
+}
+
+#chat-input-container {
+    background-color: var(--wa-app-bg);
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    z-index: 15;
+}
+
+#chat-input {
+    flex: 1;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: none;
+    margin-bottom: 0;
+    margin-right: 10px;
+    background-color: white;
+}
+
+#chat-send-btn {
+    background-color: var(--wa-button-color);
+    color: white;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+}
+
+/* Call Views */
+.call-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+}
+
+#remote-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#local-video {
+    position: absolute;
+    bottom: 120px;
+    right: 20px;
+    width: 100px;
+    height: 150px;
+    background-color: #333;
+    border: 2px solid white;
+    border-radius: 10px;
+    object-fit: cover;
+    z-index: 102;
+    cursor: grab;
+}
+
+.voice-call-bg {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+}
+
+.voice-avatar {
+    font-size: 5rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+    }
+
+    70% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
+.call-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 20px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    color: white;
+    text-align: center;
+    z-index: 101;
+}
+
+.caller-info h2 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.call-controls {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.call-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    transition: transform 0.2s;
+}
+
+.call-btn:hover {
+    transform: scale(1.1);
+}
+
+.end-call,
+.reject-btn {
+    background-color: var(--danger-color);
+}
+
+.accept-btn {
+    background-color: var(--success-color);
+}
+
+/* Modals */
+.modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px);
+}
+
+.modal-content {
+    background-color: white;
+    width: 90%;
+    max-width: 350px;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.modal-content h3 {
+    margin-bottom: 20px;
+    color: var(--wa-text-primary);
+}
+
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.emoji-option {
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.emoji-option:hover,
+.emoji-option.selected {
+    background-color: var(--wa-app-bg);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.modal-actions.column {
+    flex-direction: column;
+}
+
+.modal-actions button {
+    flex: 1;
+}
+
+/* Profile View Modal specific */
+.large-avatar {
+    font-size: 4rem;
+    margin-bottom: 10px;
+}
+
+.profile-preview h2 {
+    margin-bottom: 5px;
+}
+
+.profile-preview p {
+    color: var(--wa-text-secondary);
+    margin-bottom: 5px;
+}
+
+/* Incoming Call Modal specific */
+.call-modal {
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.call-modal-content {
+    text-align: center;
+    width: 100%;
+}
+
+.caller-avatar {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    animation: pulse 1.5s infinite;
+}
+
+.call-actions {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    margin-top: 40px;
+}
+
+/* --- V2 Features Styling --- */
+
+/* Branding Footer */
+.app-branding {
+    text-align: center;
+    padding: 10px;
+    font-size: 0.8rem;
+    color: var(--wa-text-secondary);
+    background-color: var(--wa-app-bg);
+    margin-top: auto;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    font-size: 0.75rem;
+    color: var(--wa-accent-blue);
+    font-style: italic;
+    animation: pulse 1.5s infinite;
+    display: block;
+}
+
+/* Reply Context (Above Input) */
+#reply-context {
+    background-color: #f0f0f0;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid var(--wa-accent-blue);
+    margin: 5px 10px 0 10px;
+    border-radius: 4px;
+}
+
+.reply-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.reply-title {
+    font-size: 0.8rem;
+    color: var(--wa-accent-blue);
+    font-weight: bold;
+}
+
+.reply-text {
+    font-size: 0.8rem;
+    color: var(--wa-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Message Status Ticks */
+.message-status {
+    font-size: 0.7rem;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+.status-sent {
+    color: grey;
+}
+
+.status-delivered {
+    color: grey;
+}
+
+/* Double tick logic in JS */
+.status-seen {
+    color: var(--wa-accent-blue);
+}
+
+/* Reply Bubble inside Message */
+.message-reply-preview {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-left: 3px solid var(--wa-accent-blue);
+    padding: 4px 6px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.reply-preview-name {
+    font-weight: bold;
+    color: var(--wa-accent-blue);
+    font-size: 0.75rem;
+}
+
+/* Context Menu */
+.context-menu {
+    position: absolute;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    z-index: 1000;
+    width: 150px;
+    overflow: hidden;
+}
+
+.menu-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background 0.1s;
+}
+
+.menu-item:hover {
+    background-color: #f5f5f5;
+}
+
+.menu-item.danger {
+    color: var(--danger-color);
+}
+
+/* --- V2 Fixes Styles --- */
+
+/* Chat Dropdown */
+.relative-container {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 160px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    z-index: 100;
+    overflow: hidden;
+}
+
+/* Message Actions (Visible Buttons) */
+.message-actions-bar {
+    display: none;
+    /* Hidden by default, shown on hover/touch */
+    position: absolute;
+    top: -25px;
+    right: 10px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    padding: 2px 6px;
+    gap: 8px;
+    z-index: 5;
+}
+
+.message-bubble:hover .message-actions-bar {
+    display: flex;
+}
+
+.mini-btn {
+    font-size: 1rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 2px;
+    color: var(--wa-text-secondary);
+}
+
+.mini-btn:hover {
+    color: var(--wa-accent-blue);
+    transform: scale(1.1);
+}
+
+.message-bubble {
+    position: relative;
+    /* For absolute positioning of actions */
+}
+
+/* Reaction display */
+.message-reaction {
+    position: absolute;
+    bottom: -10px;
+    right: -5px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    font-size: 0.8rem;
+    padding: 2px;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+}
+
+/* --- V2.1 Enhancements --- */
+
+/* Message Actions Bar Update */
+.message-actions-bar {
+    top: -28px;
+    padding: 4px 8px;
+    border-radius: 18px;
+    gap: 12px;
+}
+
+/* Reaction Picker */
+.reaction-picker {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 5px 10px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+    margin-bottom: 5px;
+    animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.reaction-option {
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: transform 0.2s;
+}
+
+.reaction-option:hover {
+    transform: scale(1.3);
+}
+
+/* Ensure branding is visible at bottom of Chat View too if needed, or primarily in Main View */
+/* The previous .app-branding handles it for the container, which is fine */
+
+/* --- V2.2 Fixes --- */
+
+/* 1. Emoji Picker Alignment Fix */
+.message-received .reaction-picker {
+    left: 0;
+    right: auto;
+}
+
+.message-sent .reaction-picker {
+    right: 0;
+    left: auto;
+}
+
+/* Ensure picker doesn't get cut off on small screens */
+.reaction-picker {
+    width: max-content;
+    max-width: 280px;
+    flex-wrap: wrap;
+}
+
+/* 2. Global Footer Visibility */
+/* Shrink views slightly to make room for footer at absolute bottom */
+.view {
+    height: calc(100% - 30px);
+    /* Leave 30px space */
+}
+
+/* Force footer to stay at bottom, visible above everything */
+.app-branding {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    z-index: 9999;
+    padding: 5px;
+    background-color: #f0f2f5;
+    /* Ensure opaque background */
+    border-top: 1px solid #e9edef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- V2.3 Usability Fixes --- */
+
+/* Larger Emoji Picker */
+.reaction-picker {
+    padding: 8px 12px;
+    gap: 12px;
+}
+
+.reaction-option {
+    font-size: 1.5rem;
+    /* Larger touch target */
+    padding: 2px 4px;
+    /* More spacing */
+}
+
+/* Context Menu Position Fix */
+#msg-context-menu {
+    position: fixed;
+    /* Use fixed to avoid overflow clipping issues */
+}
+
+/* --- V2.4 Fixes --- */
+
+/* Smart Picker Positioning */
+.reaction-picker.picker-left {
+    right: auto;
+    left: 0;
+}
+
+.reaction-picker.picker-right {
+    left: auto;
+    right: 0;
+}
+
+/* Ensure Call Modals don't block interaction when hidden */
+.modal.hidden {
+    pointer-events: none;
+    opacity: 0;
+    z-index: -1;
+}
+
+/* --- V3.1 Restored Styles --- */
+
+/* Improve Reply UI */
+#reply-context {
+    border-left: 4px solid var(--wa-accent-blue);
+    background: #fff;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* --- V3.2 UI Polish --- */
+
+/* Ensure Typing Indicator is always visible */
+/* Typing Indicator Styles REMOVED */
+/*
+.typing-indicator {
+    font-size: 0.8rem !important;
+    color: var(--wa-accent-blue) !important;
+    margin-left: 8px;
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+}
+*/
+
+/* Ensure Emoji Picker stays on screen */
+.picker-left {
+    left: 0 !important;
+    right: auto !important;
+    transform: none !important;
+}
+
+.picker-right {
+    right: 0 !important;
+    left: auto !important;
+    transform: none !important;
+}
+
+.picker-center {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
+
+/* --- V3.3 Fix: Force Actions Bar Visible --- */
+.message-actions-bar.active {
+    display: flex !important;
+}
+
+/* --- V3.4 Typing Bubble --- */
+.typing-bubble {
+    padding: 10px 15px !important;
+    width: fit-content;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border-bottom-left-radius: 4px;
+    /* Received bubble style */
+}
+
+.typing-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--wa-text-secondary);
+    border-radius: 50%;
+    animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes typingBounce {
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+    }
+
+    40% {
+        transform: scale(1);
+    }
+}
+
+/* --- V3.5 Modal Picker --- */
+.reaction-picker-modal {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 2000 !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+    width: auto !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 20px;
+    padding: 10px 15px;
+    gap: 12px;
+}

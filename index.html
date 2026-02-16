@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NayaKura - Chat App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+
+<body>
+
+    <div id="app-container">
+        <!-- Auth View -->
+        <div id="auth-view" class="view">
+            <div class="auth-box">
+                <h1>NayaKura</h1>
+                <p class="tagline">Connect with friends cleanly.</p>
+
+                <!-- Login Form -->
+                <form id="login-form">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <button type="submit" class="primary-btn">Log In</button>
+                    <div id="login-error" class="error-msg"></div>
+                    <p class="switch-auth">Don't have an account? <a href="#" id="show-signup">Sign up</a></p>
+                    <p class="switch-auth"><a href="#" id="show-forgot-password">Forgot Password?</a></p>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signup-form" class="hidden">
+                    <input type="text" id="signup-username" placeholder="Username (Unique)" required>
+                    <input type="email" id="signup-email" placeholder="Email" required>
+                    <input type="password" id="signup-password" placeholder="Password" required>
+                    <button type="submit" class="primary-btn">Sign Up</button>
+                    <div id="signup-error" class="error-msg"></div>
+                    <p class="switch-auth">Already have an account? <a href="#" id="show-login">Log in</a></p>
+                </form>
+
+                <!-- Forgot Password Form -->
+                <form id="forgot-password-form" class="hidden">
+                    <p>Enter your email to reset password</p>
+                    <input type="email" id="reset-email" placeholder="Email" required>
+                    <button type="submit" class="primary-btn">Reset Password</button>
+                    <div id="reset-msg" class="success-msg"></div>
+                    <div id="reset-error" class="error-msg"></div>
+                    <p class="switch-auth"><a href="#" id="cancel-reset">Back to Login</a></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main View -->
+        <div id="main-view" class="view hidden">
+            <header class="main-header">
+                <div class="header-top">
+                    <span class="app-title">NayaKura</span>
+                    <div class="header-actions">
+                        <button class="icon-btn" id="add-friend-btn" title="Add Friend">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                                <path
+                                    d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            </svg>
+                        </button>
+                        <button class="icon-btn" id="menu-btn" title="Profile & Settings">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                                <path
+                                    d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <nav class="header-nav">
+                    <div class="nav-tab active" id="nav-home">Chats <span id="home-badge" class="badge hidden">0</span>
+                    </div>
+                    <div class="nav-tab" id="nav-notifications">Updates <span id="updates-badge"
+                            class="badge hidden">0</span></div>
+                    <div class="nav-tab" id="nav-calls">Calls <span id="calls-badge" class="badge hidden">0</span></div>
+                </nav>
+            </header>
+
+            <main id="main-content">
+                <div id="home-content" class="content-panel">
+                    <!-- Chat list will be injected here -->
+                    <div class="empty-state">No chats yet. Add a friend!</div>
+                </div>
+                <div id="notifications-content" class="content-panel hidden">
+                    <div class="section-title">Friend Requests</div>
+                    <div id="friend-requests-list">
+                        <!-- Requests here -->
+                        <div class="empty-state">No new requests</div>
+                    </div>
+                </div>
+                <div id="calls-content" class="content-panel hidden">
+                    <div id="call-history-list">
+                        <!-- Call logs here -->
+                        <div class="empty-state">No recent calls</div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Chat View -->
+        <div id="chat-view" class="view hidden">
+            <header class="chat-header">
+                <button class="icon-btn back-btn" id="chat-back-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                    </svg>
+                </button>
+                <div class="chat-contact-info" id="chat-header-info">
+                    <div class="contact-avatar" id="chat-header-avatar">👤</div>
+                    <div class="contact-details">
+                        <span class="contact-name" id="chat-header-name">User</span>
+                        <span class="contact-status" id="chat-header-status">online</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <!-- Call Buttons Removed as per user request -->
+                    <div class="relative-container">
+                        <button class="icon-btn" id="chat-more-btn">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                                <path
+                                    d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                            </svg>
+                        </button>
+                        <div id="chat-dropdown-menu" class="dropdown-menu hidden">
+                            <div class="menu-item" id="menu-view-profile">View Profile</div>
+                            <div class="menu-item danger" id="menu-block-user">Block User</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div id="chat-messages">
+                <!-- Messages injected here -->
+            </div>
+
+            <div id="reply-context" class="hidden">
+                <div class="reply-content">
+                    <span class="reply-title" id="reply-to-name">Replying to...</span>
+                    <span class="reply-text" id="reply-to-text">Message text</span>
+                </div>
+                <button class="secondary-btn small-btn" id="cancel-reply-btn"
+                    style="width: auto; padding: 4px 8px; border-color: red; color: red;">Cancel</button>
+            </div>
+
+            <div id="chat-input-container">
+                <input type="text" id="chat-input" placeholder="Type a message">
+                <button class="icon-btn" id="chat-send-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Message Context Menu -->
+        <div id="msg-context-menu" class="context-menu hidden">
+            <div class="menu-item" id="ctx-reply">Reply</div>
+            <div class="menu-item" id="ctx-delete-me">Delete for me</div>
+            <div class="menu-item danger" id="ctx-delete-everyone">Delete for everyone</div>
+            <div class="menu-item" id="ctx-cancel">Cancel</div>
+        </div>
+
+        <!-- Branding Footer -->
+        <div class="app-branding">Made by Sandesh Bhandari</div>
+
+
+        <!-- Call Views -->
+        <div id="video-call-view" class="call-view hidden">
+            <video id="remote-video" autoplay playsinline></video>
+            <video id="local-video" autoplay playsinline muted></video>
+            <div class="call-overlay">
+                <div class="caller-info">
+                    <h2 id="video-caller-name">Caller Name</h2>
+                    <p>Video Call...</p>
+                </div>
+                <div class="call-controls">
+                    <button class="call-btn end-call" id="end-video-call-btn">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                            <path
+                                d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.7-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.36 7.46 6 12 6s8.66 2.36 11.71 5.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.7.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="voice-call-view" class="call-view hidden">
+            <div class="voice-call-bg">
+                <div class="voice-avatar" id="voice-caller-avatar">👤</div>
+            </div>
+            <audio id="remote-audio" autoplay></audio>
+            <div class="call-overlay">
+                <div class="caller-info">
+                    <h2 id="voice-caller-name">Caller Name</h2>
+                    <p id="voice-call-status">Voice Call...</p>
+                </div>
+                <div class="call-controls">
+                    <button class="call-btn end-call" id="end-voice-call-btn">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                            <path
+                                d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.7-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.36 7.46 6 12 6s8.66 2.36 11.71 5.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.7.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div id="profile-setup-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>Complete Profile</h3>
+                <input type="text" id="setup-name" placeholder="Display Name" required>
+                <div class="emoji-selector">
+                    <label>Choose Avatar:</label>
+                    <div class="emoji-grid" id="setup-emoji-grid">
+                        <!-- Emojis will be injected JS -->
+                    </div>
+                    <input type="hidden" id="setup-emoji" value="👤">
+                </div>
+                <button id="save-profile-btn" class="primary-btn">Save Profile</button>
+            </div>
+        </div>
+
+        <div id="add-friend-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>Add New Friend</h3>
+                <input type="text" id="add-friend-username" placeholder="Enter Username (e.g. john_doe)" required>
+                <div id="add-friend-msg"></div>
+                <div class="modal-actions">
+                    <button id="cancel-add-friend" class="secondary-btn">Cancel</button>
+                    <button id="confirm-add-friend" class="primary-btn">Send Request</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="profile-view-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>My Profile</h3>
+                <div class="profile-preview">
+                    <div class="large-avatar" id="my-profile-emoji">👤</div>
+                    <h2 id="my-profile-name">Name</h2>
+                    <p id="my-profile-username">@username</p>
+                    <p id="my-profile-email">email@example.com</p>
+                </div>
+                <hr>
+                <h4>Blocked Users</h4>
+                <div id="blocked-users-list">
+                    <!-- Blocked users injected here -->
+                </div>
+                <div class="modal-actions column">
+                    <button id="close-profile-modal" class="primary-btn">Close</button>
+                    <button id="logout-btn" class="danger-btn">Log Out</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="incoming-call-modal" class="call-modal hidden">
+            <div class="call-modal-content">
+                <div class="caller-avatar" id="incoming-call-avatar">👤</div>
+                <h3 id="incoming-caller-name">Caller Name</h3>
+                <p id="incoming-call-type">Incoming Video Call...</p>
+                <div class="call-actions">
+                    <button id="reject-call-btn" class="call-btn reject-btn">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                            <path
+                                d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.7-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.36 7.46 6 12 6s8.66 2.36 11.71 5.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.7.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z" />
+                        </svg>
+                    </button>
+                    <button id="accept-call-btn" class="call-btn accept-btn">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                            <path
+                                d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.44-5.15-3.75-6.59-6.59l1.97-1.57c.26-.26.35-.65.24-1.01-.37-1.11-.56-2.3-.56-3.53 0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="ringtone" loop>
+        <!-- Simple generated base64 ringtone -->
+        <source src="data:audio/wav;base64,UklGRl9vT1BXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU" type="audio/wav">
+    </audio>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

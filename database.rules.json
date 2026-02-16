@@ -1,0 +1,67 @@
+{
+    "rules": {
+        "users": {
+            ".read": "auth != null",
+            "$uid": {
+                ".write": "auth != null && auth.uid === $uid"
+            }
+        },
+        "usernames": {
+            ".read": true,
+            "$username": {
+                ".write": "auth != null && (!data.exists() || data.val() === auth.uid) && newData.val() === auth.uid"
+            }
+        },
+        "requests": {
+            "$uid": {
+                // Owner can read/modify their own requests (e.g. accept/reject)
+                ".read": "auth != null && auth.uid === $uid",
+                ".write": "auth != null && auth.uid === $uid",
+                "$senderUid": {
+                    // Sender can create a request
+                    ".write": "auth != null && auth.uid === $senderUid"
+                }
+            }
+        },
+        "contacts": {
+            "$uid": {
+                // Owner can read their contacts
+                ".read": "auth != null && auth.uid === $uid",
+                "$contactUid": {
+                    // Owner can add/remove contacts OR the contact themselves can add (when accepting request)
+                    ".write": "auth != null && (auth.uid === $uid || auth.uid === $contactUid)"
+                }
+            }
+        },
+        "messages": {
+            "$chatId": {
+                ".read": "auth != null",
+                ".write": "auth != null"
+            }
+        },
+        "unreadCounts": {
+            "$uid": {
+                ".read": "auth != null",
+                ".write": "auth != null"
+            }
+        },
+        "typing": {
+            "$chatId": {
+                ".read": "auth != null",
+                ".write": "auth != null"
+            }
+        },
+        "deletedMessages": {
+            "$uid": {
+                ".read": "auth != null && auth.uid === $uid",
+                ".write": "auth != null && auth.uid === $uid"
+            }
+        },
+        "blocked": {
+            "$uid": {
+                ".read": "auth != null && auth.uid === $uid",
+                ".write": "auth != null && auth.uid === $uid"
+            }
+        }
+    }
+}
